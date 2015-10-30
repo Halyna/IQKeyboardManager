@@ -40,6 +40,11 @@ public class IQKeyboardReturnKeyHandler: NSObject , UITextFieldDelegate, UITextV
     public var delegate: protocol<UITextFieldDelegate, UITextViewDelegate>?
     
     /**
+    It help to choose the lastTextField instance from sibling responderViews. Default is IQAutoToolbarBySubviews.
+    */
+    public var toolbarManageBehaviour = IQAutoToolbarManageBehaviour.BySubviews
+    
+    /**
     Set the last textfield return key type. Default is UIReturnKeyDefault.
     */
     public var lastTextFieldReturnKeyType : UIReturnKeyType = UIReturnKeyType.Default {
@@ -59,7 +64,7 @@ public class IQKeyboardReturnKeyHandler: NSObject , UITextFieldDelegate, UITextV
     /// MARK: Initialization/Deinitialization
     ///--------------------------------------
 
-    public override init() {
+    override init() {
         super.init()
     }
     
@@ -136,19 +141,9 @@ public class IQKeyboardReturnKeyHandler: NSObject , UITextFieldDelegate, UITextV
         if let unwrappedTableView = tableView {     //   (Enhancement ID: #22)
             textFields = unwrappedTableView.deepResponderViews()
         } else {  //Otherwise fetching all the siblings
-            
-            textFields = view.responderSiblings()
-            
-            //Sorting textFields according to behaviour
-            switch IQKeyboardManager.sharedManager().toolbarManageBehaviour {
-                //If needs to sort it by tag
-            case .ByTag:        textFields = textFields?.sortedArrayByTag()
-                //If needs to sort it by Position
-            case .ByPosition:   textFields = textFields?.sortedArrayByPosition()
-            default:    break
-            }
+            textFields = IQKeyboardManager.sharedManager().responderViews()
         }
-        
+      
         if let lastView = textFields?.last {
             
             if let textField = view as? UITextField {
@@ -272,18 +267,7 @@ public class IQKeyboardReturnKeyHandler: NSObject , UITextFieldDelegate, UITextV
         if let unwrappedTableView = tableView {     //   (Enhancement ID: #22)
             textFields = unwrappedTableView.deepResponderViews()
         } else {  //Otherwise fetching all the siblings
-            
-            textFields = view.responderSiblings()
-            
-            //Sorting textFields according to behaviour
-            switch IQKeyboardManager.sharedManager().toolbarManageBehaviour {
-                //If needs to sort it by tag
-            case .ByTag:        textFields = textFields?.sortedArrayByTag()
-                //If needs to sort it by Position
-            case .ByPosition:   textFields = textFields?.sortedArrayByPosition()
-            default:
-                break
-            }
+            textFields = IQKeyboardManager.sharedManager().responderViews()
         }
 
         if let unwrappedTextFields = textFields {
